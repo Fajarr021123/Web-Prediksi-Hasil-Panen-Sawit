@@ -69,6 +69,7 @@ def predict_harvest(input_data):
 
     return y_pred[0][0]
 
+
 # Streamlit App
 import requests
 from streamlit_lottie import st_lottie
@@ -82,8 +83,34 @@ def load_lottieurl(url: str):
 lottie_url_hello = "https://lottie.host/ccafe4ff-6ca7-4467-919d-54d5601b3c19/XPReODK038.json"
 lottie_hello = load_lottieurl(lottie_url_hello)
 
+# Custom Theme
+custom_style = """
+    <style>
+        .stButton>button {
+            background-color: #294B29 !important;
+            color: white !important;
+            border-radius: 5px !important;
+        }
+        .stSuccess {
+            color: white !important;
+            background-color: #294B29 !important;
+            border-radius: 15px !important;
+            padding: 10px;
+            font-weight: bold;
+            max-width: 300px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        h1 {
+            text-align: center !important; /* CSS untuk memusatkan judul */
+        }
+    </style>
+"""
+st.markdown(custom_style, unsafe_allow_html=True)
+
 # Title for the Streamlit app
 st.title('Prediksi Hasil Panen Sawit')
+
 
 # Display Lottie animation
 st_lottie(lottie_hello, loop=True, key="hello")
@@ -94,29 +121,6 @@ user_input = get_user_input()
 # Create DataFrame for user input
 df_user_input = pd.DataFrame([user_input], columns=latih.columns)
 
-# Custom Theme
-custom_style = """
-    <style>
-        .stButton>button {
-            background-color: #294B29 !important;
-            color: white !important;
-            border-radius: 15px !important; /* Atur radius border sesuai kebutuhan */
-            height: 50px;
-        }
-        .stSuccess {
-            height: 50px;
-            color: white !important;
-            background-color: #294B29 !important;
-            border-radius: 15px !important; /* Atur radius border sesuai kebutuhan */
-            padding: 10px; 
-            font-weight: bold;
-            max-width: 300px; /* Atur lebar maksimal sesuai kebutuhan */
-            overflow: hidden; /* Atur overflow agar teks yang terlalu panjang terpotong */
-            text-overflow: ellipsis;
-        }
-    </style>
-"""
-st.markdown(custom_style, unsafe_allow_html=True)
 
 # Button to trigger prediction
 if st.button('Prediksi Hasil Panen'):
@@ -125,4 +129,3 @@ if st.button('Prediksi Hasil Panen'):
 
     # Display the predicted harvest with st.success
     st.markdown(f'<p class="stSuccess">Prediksi Hasil Panen: {predicted_harvest:.2f} Ton</p>', unsafe_allow_html=True)
-

@@ -94,10 +94,36 @@ user_input = get_user_input()
 # Create DataFrame for user input
 df_user_input = pd.DataFrame([user_input], columns=latih.columns)
 
+# Custom Theme
+custom_style = """
+    <style>
+        .stButton>button {
+            background-color: #294B29 !important;
+            color: white !important;
+            border-radius: 15px !important; /* Atur radius border sesuai kebutuhan */
+            height: 50px;
+        }
+        .stSuccess {
+            height: 50px;
+            color: white !important;
+            background-color: #294B29 !important;
+            border-radius: 15px !important; /* Atur radius border sesuai kebutuhan */
+            padding: 10px; 
+            font-weight: bold;
+            max-width: 300px; /* Atur lebar maksimal sesuai kebutuhan */
+            overflow: hidden; /* Atur overflow agar teks yang terlalu panjang terpotong */
+            text-overflow: ellipsis;
+        }
+    </style>
+"""
+st.markdown(custom_style, unsafe_allow_html=True)
+
 # Button to trigger prediction
 if st.button('Prediksi Hasil Panen'):
     # Predict harvest yield
     predicted_harvest = predict_harvest(df_user_input)
 
-    # Display the predicted harvest
+    # Display the predicted harvest with st.success
+    st.markdown(f'<p class="stSuccess">Prediksi Hasil Panen: {predicted_harvest:.2f} Ton</p>', unsafe_allow_html=True)
+
     st.success(f'Prediksi Hasil Panen: {predicted_harvest:.2f} Ton')

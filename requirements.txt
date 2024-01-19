@@ -1,5 +1,5 @@
-numpy==1.19.5
-pandas==1.3.3
-scikit-learn==0.24.2
-tensorflow==2.6.0
-streamlit==1.8.0
+pipenv install numpy==1.19.5
+pipenv install pandas==1.3.3
+pipenv install scikit-learn==0.24.2
+pipenv install tensorflow==2.6.0
+pipenv install streamlit==1.8.0

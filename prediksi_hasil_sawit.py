@@ -83,7 +83,7 @@ lottie_url_hello = "https://lottie.host/ccafe4ff-6ca7-4467-919d-54d5601b3c19/XPR
 lottie_hello = load_lottieurl(lottie_url_hello)
 
 # Title for the Streamlit app
-st.title('Prediksi Hasil Panen ')
+st.title('Prediksi Hasil Panen Sawit')
 
 # Display Lottie animation
 st_lottie(lottie_hello, loop=True, key="hello")

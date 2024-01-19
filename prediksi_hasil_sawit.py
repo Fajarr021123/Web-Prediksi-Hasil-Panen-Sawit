@@ -126,4 +126,3 @@ if st.button('Prediksi Hasil Panen'):
     # Display the predicted harvest with st.success
     st.markdown(f'<p class="stSuccess">Prediksi Hasil Panen: {predicted_harvest:.2f} Ton</p>', unsafe_allow_html=True)
 
-    st.success(f'Prediksi Hasil Panen: {predicted_harvest:.2f} Ton')

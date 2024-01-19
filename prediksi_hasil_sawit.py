@@ -8,7 +8,7 @@ from datetime import datetime
 st.set_page_config(
     page_title="Prediksi Hasil Sawit",
     page_icon="logo_sawit.png",  
-    layout="wide", 
+ 
 )
 # Load the trained model
 model = load_model('sawit_model.h5')

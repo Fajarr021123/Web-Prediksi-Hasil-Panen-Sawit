@@ -4,7 +4,12 @@ import pandas as pd
 from sklearn.preprocessing import MinMaxScaler, LabelEncoder
 from tensorflow.keras.models import load_model
 from datetime import datetime
-
+# Set page configuration
+st.set_page_config(
+    page_title="Prediksi Hasil Sawit",
+    page_icon="logo_sawit.png",  
+    layout="wide", 
+)
 # Load the trained model
 model = load_model('sawit_model.h5')
 

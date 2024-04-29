@@ -1,76 +1,95 @@
 import streamlit as st
 import numpy as np
 import pandas as pd
-from sklearn.preprocessing import MinMaxScaler, LabelEncoder
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
 from datetime import datetime
 
-# Konfigurasi halaman
+# Set page configuration
 st.set_page_config(
     page_title="Prediksi Hasil Sawit",
     page_icon="logo_sawit.png",  
 )
 
-# Memuat model yang telah dilatih
-model = load_model('sawit_model.h5')
+# Load the trained model
+model = load_model('sawit_model neww.h5')
+# Load training data
+train = pd.read_csv('data_sawit_v2 new.csv')
 
-# Menginisialisasi LabelEncoders
-label_encoder_jenis_tanah = LabelEncoder()
-label_encoder_musim = LabelEncoder()
+# class LabelEncoder
+class LabelEncoder:
+    def __init__(self):
+        self.mapping = {}
 
-# Memuat data latih
-latih = pd.read_csv('data_train_sawit.csv')
+    def fit_transform(self, kolom):
+        nilai_unik = kolom.unique()
+        pemetaan = {nilai: idx for idx, nilai in enumerate(nilai_unik)}
+        self.mapping[kolom.name] = pemetaan
+        return kolom.map(pemetaan)
 
-# Melabeli enkode kolom 'jenis_tanah' dan 'musim'
-latih["jenis_tanah"] = label_encoder_jenis_tanah.fit_transform(latih["jenis_tanah"])
-latih["musim"] = label_encoder_musim.fit_transform(latih["musim"])
+    def transform(self, kolom):
+        pemetaan = self.mapping.get(kolom.name)
+        if pemetaan:
+            return kolom.map(pemetaan)
+        else:
+            raise ValueError(f"Tidak ditemukan pemetaan untuk kolom '{kolom.name}'")
 
-# Menginisialisasi MinMaxScaler
+# Inisialisasi LabelEncoder
+label_encoder = LabelEncoder()
+
+# Lakukan label encoding pada kolom "Jenis Tanah" dan "Musim"
+train["jenis_tanah"] = label_encoder.fit_transform(train["jenis_tanah"])
+train["musim"] = label_encoder.fit_transform(train["musim"])
+
+# Memisahkan fitur dan label
+X = train.drop(['hasil_panen', 'tgl_panen_terakhir', 'tgl_panen'], axis=1).values
+y = train['hasil_panen'].values
+# Initialize MinMaxScaler
 scaler = MinMaxScaler()
 
-# Menginisialisasi y_scaler
-y_scaler = MinMaxScaler()
+# Normalisasi data (menggunakan MinMaxScaler untuk seluruh fitur)
+X_scaled = scaler.fit_transform(X)
+y_scaler = MinMaxScaler(feature_range=(0, 1))
+y_scaled = y_scaler.fit_transform(y.reshape(-1, 1))
 
-# Fungsi untuk mendapatkan input pengguna
+# Function to get user input
 def get_user_input():
     tgl_panen_terakhir = st.date_input("Pilih Tanggal Terakhir Panen", min_value=datetime(1900, 1, 1), max_value=datetime(2100, 12, 31), value=None)
     tgl_panen = st.date_input("Pilih Tanggal Panen Berikutnya", min_value=datetime(1900, 1, 1), max_value=datetime(2100, 12, 31), value=None)
-    umur_pilihan = list(range(0, 30)) 
+    umur_pilihan = list(range(6, 30)) 
     umur_tanaman = st.selectbox("Pilih Umur Tanaman", umur_pilihan)
     musim = st.selectbox("Masukkan Musim", ['hujan', 'kemarau'])
-    suhu_pilihan = list(range(0, 41))  
-    suhu = st.selectbox("Pilih Suhu (C)", suhu_pilihan)
-   
-    # Menggunakan opsi tetap untuk 'jenis_tanah'
     jenis_tanah_options = ['lempung', 'tanah berpasir', 'tanah liat']
     jenis_tanah = st.selectbox("Masukkan Jenis Tanah", jenis_tanah_options)
     jumlah_pemupukan = st.number_input("Masukkan Pemupukan (kg/ha): ")
     luas_lahan = st.number_input("Masukkan Luas Lahan (hektar): ")
     jumlah_batang = st.number_input("Masukkan Jumlah Batang: ", min_value=0, value=0, step=1)
     
-    return [tgl_panen_terakhir, tgl_panen, umur_tanaman, musim, suhu, jenis_tanah, jumlah_pemupukan, luas_lahan, jumlah_batang, np.nan]
+    return [tgl_panen_terakhir, tgl_panen, umur_tanaman, musim, jenis_tanah, jumlah_pemupukan, luas_lahan, jumlah_batang]
 
-# Fungsi untuk memprediksi hasil panen
-def predict_harvest(input_data):
-    # Menggunakan label_encoder_jenis_tanah sebelumnya untuk mentransformasi 'jenis_tanah'
-    input_data["jenis_tanah"] = label_encoder_jenis_tanah.transform([input_data["jenis_tanah"]])[0]
-    input_data["musim"] = label_encoder_musim.transform([input_data["musim"]])[0]
 
-    # Mengesampingkan kolom non-numerik dari proses fitting
-    numeric_columns = latih.drop(['hasil_panen', 'tgl_panen_terakhir', 'tgl_panen'], axis=1).select_dtypes(include=[np.number]).columns
-    scaler.fit(latih[numeric_columns])
-    y_scaler.fit(latih['hasil_panen'].values.reshape(-1, 1))
+def predict_harvest(user_input):
+    # Inisialisasi LabelEncoder
+    label_encoder = LabelEncoder()
 
-    # Normalisasi fitur input menggunakan scaler yang sudah di-fit
-    X_test_scaled = scaler.transform(input_data[numeric_columns].values.reshape(1, -1))
-    
-    # Membentuk ulang data untuk model LSTM
-    X_test_reshaped = np.reshape(X_test_scaled, (X_test_scaled.shape[0], 1, X_test_scaled.shape[1]))
+    # Lakukan label encoding pada kolom "Jenis Tanah" dan "Musim"
+    df_user_input["jenis_tanah"] = label_encoder.fit_transform(df_user_input["jenis_tanah"])
+    df_user_input["musim"] = label_encoder.fit_transform(df_user_input["musim"])
 
-    # Memprediksi hasil panen
+    # Mengambil fitur dari dataset test
+    X_test = df_user_input.drop(['tgl_panen_terakhir', 'tgl_panen'], axis=1).values
+
+    # Normalisasi fitur dataset test menggunakan skaler yang sama
+    X_test_scaled = scaler.transform(X_test)
+
+    # Reshape data untuk sesuai dengan input model
+    X_test_reshaped = X_test_scaled.reshape(X_test_scaled.shape[0], 1, X_test_scaled.shape[1])
+
+    # Memprediksi nilai Hasil_Panen/Ton
     y_pred_scaled = model.predict(X_test_reshaped)
 
-    # Inverse transform untuk mendapatkan nilai asli
+    # Invers transformasi untuk mendapatkan nilai asli
     y_pred = y_scaler.inverse_transform(y_pred_scaled)
 
     return y_pred[0][0]
@@ -88,7 +107,7 @@ def load_lottieurl(url: str):
 lottie_url_hello = "https://lottie.host/ccafe4ff-6ca7-4467-919d-54d5601b3c19/XPReODK038.json"
 lottie_hello = load_lottieurl(lottie_url_hello)
 
-# Tema kustom
+# Custom Theme
 custom_style = """
     <style>
         .stButton>button {
@@ -113,22 +132,23 @@ custom_style = """
 """
 st.markdown(custom_style, unsafe_allow_html=True)
 
-# Judul untuk aplikasi Streamlit
+# Title for the Streamlit app
 st.title('Prediksi Hasil Panen Sawit')
 
-# Menampilkan animasi Lottie
+
+# Display Lottie animation
 st_lottie(lottie_hello, loop=True, key="hello")
 
-# Mendapatkan input pengguna
+# Get user input
 user_input = get_user_input()
 
-# Membuat DataFrame untuk input pengguna
-df_user_input = pd.DataFrame([user_input], columns=latih.columns)
+# Create DataFrame for user input
+df_user_input = pd.DataFrame([user_input], columns=['tgl_panen_terakhir', 'tgl_panen', 'umur_tanaman', 'musim', 'jenis_tanah', 'jumlah_pemupukan', 'luas_lahan', 'jumlah_batang'])
 
-# Tombol untuk memicu prediksi
+# Button to trigger prediction
 if st.button('Prediksi Hasil Panen'):
-    # Memprediksi hasil panen
-    predicted_harvest = predict_harvest(df_user_input)
+    # Predict harvest yield
+    predicted_harvest = predict_harvest(user_input)
 
-    # Menampilkan hasil panen yang diprediksi dengan st.success
+    # Display the predicted harvest with st.success
     st.markdown(f'<p class="stSuccess">Prediksi Hasil Panen: {predicted_harvest:.2f} Ton</p>', unsafe_allow_html=True)

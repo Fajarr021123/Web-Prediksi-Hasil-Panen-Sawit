@@ -6,7 +6,7 @@ from sklearn.preprocessing import MinMaxScaler
 from tensorflow.keras.models import load_model
 from datetime import datetime
 
-# Set page configuration
+
 st.set_page_config(
     page_title="Prediksi Hasil Sawit",
     page_icon="logo_sawit.png",  
@@ -69,7 +69,7 @@ def get_user_input():
     return [tgl_panen_terakhir, tgl_panen, umur_tanaman, musim, jenis_tanah, jumlah_pemupukan, luas_lahan, jumlah_batang]
 
 
-def predict_harvest(user_input):
+def prediksi_sawit(user_input):
     # Inisialisasi LabelEncoder
     label_encoder = LabelEncoder()
 
@@ -132,23 +132,23 @@ custom_style = """
 """
 st.markdown(custom_style, unsafe_allow_html=True)
 
-# Title for the Streamlit app
+# Title 
 st.title('Prediksi Hasil Panen Sawit')
 
 
-# Display Lottie animation
+# menampilkan animation
 st_lottie(lottie_hello, loop=True, key="hello")
 
-# Get user input
+# mendapatkan user input
 user_input = get_user_input()
 
-# Create DataFrame for user input
+# membuat DataFrame user input
 df_user_input = pd.DataFrame([user_input], columns=['tgl_panen_terakhir', 'tgl_panen', 'umur_tanaman', 'musim', 'jenis_tanah', 'jumlah_pemupukan', 'luas_lahan', 'jumlah_batang'])
 
-# Button to trigger prediction
+# Button untuk melakukan prediksi
 if st.button('Prediksi Hasil Panen'):
-    # Predict harvest yield
-    predicted_harvest = predict_harvest(user_input)
+    
+    predicted_sawit = prediksi_sawit(user_input)
 
-    # Display the predicted harvest with st.success
-    st.markdown(f'<p class="stSuccess">Prediksi Hasil Panen: {predicted_harvest:.2f} Ton</p>', unsafe_allow_html=True)
+    
+    st.markdown(f'<p class="stSuccess">Prediksi Hasil Panen: {predicted_sawit:.2f} Ton</p>', unsafe_allow_html=True)

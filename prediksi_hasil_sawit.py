@@ -15,7 +15,7 @@ st.set_page_config(
 # Load the trained model
 model = load_model('sawit_model neww.h5')
 # Load training data
-train = pd.read_csv('data_sawit_v2 new.csv')
+train = pd.read_csv('data_sawit.csv')
 
 # class LabelEncoder
 class LabelEncoder:

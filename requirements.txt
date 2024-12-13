@@ -1,3 +1,4 @@
+pip==24.3.1
 absl-py==2.0.0
 altair==4.2.2
 appnope==0.1.3

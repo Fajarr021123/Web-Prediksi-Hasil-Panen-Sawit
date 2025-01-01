@@ -12,12 +12,12 @@ st.set_page_config(
     page_icon="logo_sawit.png",  
 )
 
-# Load the trained model
+# Load model
 model = load_model('sawit_model new.h5')
 # Load training data
 train = pd.read_csv('data_sawit.csv')
 
-# class LabelEncoder
+# membuat class LabelEncoder
 class LabelEncoder:
     def __init__(self):
         self.mapping = {}
@@ -35,7 +35,7 @@ class LabelEncoder:
         else:
             raise ValueError(f"Tidak ditemukan pemetaan untuk kolom '{kolom.name}'")
 
-# Inisialisasi LabelEncoder
+# melakukan Inisialisasi LabelEncoder
 label_encoder = LabelEncoder()
 
 # Lakukan label encoding pada kolom "Jenis Tanah" dan "Musim"
@@ -107,7 +107,7 @@ def load_lottieurl(url: str):
 lottie_url_hello = "https://lottie.host/ccafe4ff-6ca7-4467-919d-54d5601b3c19/XPReODK038.json"
 lottie_hello = load_lottieurl(lottie_url_hello)
 
-# Custom Theme
+# Custom Theme streamlit
 custom_style = """
     <style>
         .stButton>button {
